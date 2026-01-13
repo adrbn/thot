@@ -8,6 +8,7 @@ use std::rc::Rc;
 use std::sync::{Arc, Mutex};
 use std::task::{Poll, Waker};
 use std::thread;
+use tracing::error;
 
 use libpulse_binding as pulse;
 use libpulse_simple_binding as psimple;

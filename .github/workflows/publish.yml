@@ -1,0 +1,86 @@
+name: "Build & Release"
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build-tauri:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: "macos-latest"
+            args: "--target aarch64-apple-darwin"
+            name: "macOS-ARM64"
+          - platform: "macos-latest"
+            args: "--target x86_64-apple-darwin"
+            name: "macOS-Intel"
+          - platform: "ubuntu-22.04"
+            args: ""
+            name: "Linux"
+          - platform: "windows-latest"
+            args: ""
+            name: "Windows"
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Install system deps (Ubuntu)
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            librsvg2-dev patchelf libgtk-3-dev pkg-config \
+            libasound2-dev libpulse-dev \
+            libglib2.0-dev libgdk-pixbuf2.0-dev \
+            libayatana-appindicator3-dev
+
+      - name: Install frontend deps
+        run: npm ci
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0.5.16
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: "thot v__VERSION__"
+          releaseBody: |
+            ## Download thot for your platform
+            
+            | Platform | File |
+            |----------|------|
+            | macOS (Apple Silicon) | `.dmg` file ending in `aarch64.dmg` |
+            | macOS (Intel) | `.dmg` file ending in `x86_64.dmg` |
+            | Windows | `.msi` or `.exe` installer |
+            | Linux | `.AppImage` or `.deb` |
+            
+            ### macOS Users
+            Since this app is not signed with an Apple Developer certificate:
+            1. Download the `.dmg` file
+            2. Open it and drag thot to Applications
+            3. **Right-click** the app and select "Open" (don't double-click)
+            4. Click "Open" in the dialog that appears
+            
+            Or: System Settings → Privacy & Security → Click "Open Anyway"
+          releaseDraft: false
+          prerelease: false
+          includeUpdaterJson: false
+          args: ${{ matrix.args }}

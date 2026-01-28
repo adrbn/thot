@@ -330,19 +330,13 @@ pub fn update_shortcuts<R: Runtime>(
 
     let mut shortcuts_to_register = Vec::new();
 
-    let has_license = {
-        let license_state = app.state::<LicenseState>();
-        license_state.is_active()
-    };
+    // thot: Always allow all shortcuts - no license restrictions!
+    let has_license = true;
 
     for (action_id, binding) in &config.bindings {
         if binding.enabled && !binding.key.is_empty() {
             if action_id == "move_window" {
-                if !has_license {
-                    eprintln!("Skipping move_window registration - license inactive");
-                    continue;
-                }
-
+                // thot: move_window always enabled
                 let modifiers = binding.key.trim();
                 if modifiers.is_empty() {
                     continue;
@@ -501,16 +495,8 @@ pub fn validate_shortcut_key(key: String) -> Result<bool, String> {
 }
 
 #[tauri::command]
-pub fn set_license_status<R: Runtime>(app: AppHandle<R>, has_license: bool) -> Result<(), String> {
-    {
-        let state = app.state::<LicenseState>();
-        state.set_active(has_license);
-    }
-
-    if !has_license {
-        stop_all_move_windows(&app);
-    }
-
+pub fn set_license_status<R: Runtime>(_app: AppHandle<R>, _has_license: bool) -> Result<(), String> {
+    // thot: No-op, license is always active
     Ok(())
 }
 

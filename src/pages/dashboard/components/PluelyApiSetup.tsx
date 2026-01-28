@@ -55,7 +55,6 @@ export const PluelyApiSetup = () => {
     pluelyApiEnabled,
     setPluelyApiEnabled,
     hasActiveLicense,
-    setHasActiveLicense,
     getActiveLicenseStatus,
     setSupportsImages,
   } = useApp();
@@ -199,7 +198,7 @@ export const PluelyApiSetup = () => {
     setIsLoading(true);
     setError(null);
     setSuccess(null);
-    setHasActiveLicense(false);
+    // thot: License always active, but we still allow removing stored keys
     try {
       // Remove all license data from secure storage in one call
       await invoke("secure_storage_remove", {

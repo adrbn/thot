@@ -1,21 +1,20 @@
 {
-  "name": "pluely",
+  "name": "thot",
   "private": false,
-  "version": "0.1.9",
-  "description": "The Open Source Alternative to Cluely - A lightning-fast, privacy-first AI assistant that works seamlessly during meetings, interviews, and conversations without anyone knowing.",
+  "version": "1.0.0",
+  "description": "A fully free, open source AI assistant - no restrictions, no paywalls. Works seamlessly during meetings, interviews, and conversations.",
   "author": {
-    "name": "Srikanth Nani",
-    "email": "srikanthnani1202@gmail.com",
-    "url": "https://www.srikanthnani.com"
+    "name": "adrbn",
+    "url": "https://github.com/adrbn/thot"
   },
   "license": "GPL-3.0",
-  "homepage": "https://github.com/iamsrikanthnani/pluely#readme",
+  "homepage": "https://github.com/adrbn/thot#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/iamsrikanthnani/pluely.git"
+    "url": "git+https://github.com/adrbn/thot.git"
   },
   "bugs": {
-    "url": "https://github.com/iamsrikanthnani/pluely/issues"
+    "url": "https://github.com/adrbn/thot/issues"
   },
   "keywords": [
     "ai-assistant",
@@ -23,12 +22,13 @@
     "desktop-app",
     "privacy-first",
     "open-source",
+    "free",
+    "unrestricted",
     "meeting-assistant",
     "speech-to-text",
     "llm",
     "chatgpt",
     "claude",
-    "cluely-alternative",
     "typescript",
     "react",
     "rust"

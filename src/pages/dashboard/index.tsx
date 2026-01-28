@@ -1,66 +1,69 @@
-import { useCallback, useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
-import { GetLicense } from "@/components";
-import { PluelyApiSetup, Usage } from "./components";
 import { PageLayout } from "@/layouts";
-import { useApp } from "@/contexts";
+import { Header } from "@/components";
+import { Cpu, Mic, Keyboard, Globe } from "lucide-react";
+import { Link } from "react-router-dom";
+
+const QuickLink = ({ to, icon: Icon, title, description }: { to: string; icon: any; title: string; description: string }) => (
+  <Link
+    to={to}
+    className="flex items-start gap-3 p-4 rounded-xl border border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all"
+  >
+    <div className="p-2 rounded-lg bg-primary/10">
+      <Icon className="size-5 text-primary" />
+    </div>
+    <div>
+      <h3 className="font-medium text-sm">{title}</h3>
+      <p className="text-xs text-muted-foreground">{description}</p>
+    </div>
+  </Link>
+);
 
 const Dashboard = () => {
-  const { hasActiveLicense } = useApp();
-  const [activity, setActivity] = useState<any>(null);
-  const [loadingActivity, setLoadingActivity] = useState(false);
-
-  const fetchActivity = useCallback(async () => {
-    if (!hasActiveLicense) {
-      setActivity({ data: [], total_tokens_used: 0 });
-      return;
-    }
-    setLoadingActivity(true);
-    try {
-      const response = await invoke("get_activity");
-      const responseData: any = response;
-      if (responseData && responseData.success) {
-        setActivity(responseData);
-      } else {
-        setActivity({ data: [], total_tokens_used: 0 });
-      }
-    } catch (error) {
-      setActivity({ data: [], total_tokens_used: 0 });
-    } finally {
-      setLoadingActivity(false);
-    }
-  }, [hasActiveLicense]);
-
-  useEffect(() => {
-    if (hasActiveLicense) {
-      fetchActivity();
-    } else {
-      setActivity(null);
-    }
-  }, [fetchActivity, hasActiveLicense]);
-
-  const activityData =
-    activity && Array.isArray(activity.data) ? activity.data : [];
-  const totalTokens =
-    activity && typeof activity.total_tokens_used === "number"
-      ? activity.total_tokens_used
-      : 0;
-
   return (
     <PageLayout
       title="Dashboard"
-      description="Pluely license to unlock faster responses, quicker support and premium features."
-      rightSlot={!hasActiveLicense ? <GetLicense /> : null}
+      description="Welcome to thot - your fully free AI assistant"
     >
-      {/* Pluely API Setup */}
-      <PluelyApiSetup />
+      <div className="space-y-6">
+        <Header
+          title="Quick Setup"
+          description="Get started by configuring your AI providers and preferences"
+          isMainTitle
+        />
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <QuickLink
+            to="/settings"
+            icon={Cpu}
+            title="AI Providers"
+            description="Configure OpenAI, Anthropic, or custom providers"
+          />
+          <QuickLink
+            to="/settings"
+            icon={Mic}
+            title="Speech-to-Text"
+            description="Set up voice input with your preferred STT provider"
+          />
+          <QuickLink
+            to="/shortcuts"
+            icon={Keyboard}
+            title="Keyboard Shortcuts"
+            description="Customize global shortcuts for quick access"
+          />
+          <QuickLink
+            to="/responses"
+            icon={Globe}
+            title="Response Settings"
+            description="Choose language, response length, and more"
+          />
+        </div>
 
-      <Usage
-        loading={loadingActivity}
-        onRefresh={fetchActivity}
-        data={activityData}
-        totalTokens={totalTokens}
-      />
+        <div className="mt-6 p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+          <p className="text-sm text-green-600 dark:text-green-400">
+            🎉 <strong>All features unlocked!</strong> No license required. Configure your own API keys and enjoy!
+          </p>
+        </div>
+      </div>
     </PageLayout>
   );
 };

@@ -17,8 +17,7 @@ export const SPEECH_TO_TEXT_PROVIDERS = [
       -F "file={{AUDIO}}" \\
       -F model={{MODEL}} \\
       -F temperature=0 \\
-      -F response_format=text \\
-      -F language=en`,
+      -F response_format=text`,
     responseContentPath: "text",
     streaming: false,
   },
@@ -43,7 +42,7 @@ export const SPEECH_TO_TEXT_PROVIDERS = [
         "config": {
           "encoding": "LINEAR16", 
           "sampleRateHertz": 16000,
-          "languageCode": "en-US"
+          "languageCode": "{{LANGUAGE_CODE:fr-FR}}"
         },
         "audio": {
           "content": "{{AUDIO}}"
@@ -65,7 +64,7 @@ export const SPEECH_TO_TEXT_PROVIDERS = [
   {
     id: "azure-stt",
     name: "Azure Speech-to-Text",
-    curl: `curl -X POST "https://{{REGION}}.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=en-US" \\
+    curl: `curl -X POST "https://{{REGION}}.stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language={{LANGUAGE_CODE:fr-FR}}" \\
       -H "Ocp-Apim-Subscription-Key: {{API_KEY}}" \\
       -H "Content-Type: audio/wav" \\
       --data-binary {{AUDIO}}`,
@@ -78,7 +77,7 @@ export const SPEECH_TO_TEXT_PROVIDERS = [
     curl: `curl -X POST "https://asr.api.speechmatics.com/v2/jobs" \\
       -H "Authorization: Bearer {{API_KEY}}" \\
       -F "data_file={{AUDIO}}" \\
-      -F 'config={"type": "transcription", "transcription_config": {"language": "en"}}'`,
+      -F 'config={"type": "transcription", "transcription_config": {"language": "auto"}}'`,
     responseContentPath: "job.id",
     streaming: false,
   },
